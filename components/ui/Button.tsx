@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { cn } from '@/lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'success' | 'danger';
@@ -8,6 +9,33 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   children: React.ReactNode;
 }
+
+// Function to generate button variant classes - needed for alert-dialog
+export const buttonVariants = ({
+  variant = 'primary',
+  size = 'md',
+}: {
+  variant?: 'primary' | 'secondary' | 'outline' | 'success' | 'danger';
+  size?: 'sm' | 'md' | 'lg';
+} = {}) => {
+  const baseClasses = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+  
+  const variantClasses = {
+    primary: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+    outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+    success: 'bg-green-600 text-white hover:bg-green-600/90',
+    danger: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+  };
+  
+  const sizeClasses = {
+    sm: 'h-9 px-3',
+    md: 'h-10 px-4 py-2',
+    lg: 'h-11 px-8',
+  };
+
+  return cn(baseClasses, variantClasses[variant], sizeClasses[size]);
+};
 
 export const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
@@ -18,25 +46,9 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseClasses = 'font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
-  
-  const variantClasses = {
-    primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
-    outline: 'border border-gray-300 hover:border-gray-400 text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
-    success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500',
-    danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
-  };
-  
-  const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
-  };
-
   return (
     <button
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      className={cn(buttonVariants({ variant, size }), className)}
       disabled={disabled || isLoading}
       {...props}
     >
